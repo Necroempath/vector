@@ -10,143 +10,142 @@
 class SuperVector
 {
 private:
-    int* _data;
-    size_t _size;
-    size_t _capacity;
+	int* _data;
+	size_t _size;
+	size_t _capacity;
 
-    void ResizeArray(float factor)
-    {
-        int* temp = new int[_capacity * factor]();
+	void ResizeArray(const float factor)
+	{
+		int* temp = new int[_capacity * factor]();
 
-        for (int i = 0; i < _size; i++)
-        {
-            _data[i] = temp[i];
-        }
+		for (int i = 0; i < _size; i++)
+		{
+			temp[i] = _data[i];
+		}
 
-        delete[] _data;
-        _data = temp;
-    }
+		_capacity *= factor; //comment this and catch sweet bug)
+		delete[] _data;
+		_data = temp;
+	}
 
 public:
-    
-    SuperVector() : _data(nullptr), _size(0), _capacity(0) { std::cout << "default constructor" << std::endl; }
 
-    SuperVector(size_t size) : _size(size), _capacity(size * 1.5f)
-    {
-        _data = new int[_capacity]();
-    }
+	SuperVector() : _data(nullptr), _size(0), _capacity(0) {}
 
-    SuperVector(const SuperVector& other) : _size(other._size), _capacity(other._capacity)
-    {
-        _data = new int[_capacity];
-        for (size_t i = 0; i < _size; i++)
-        {
-            _data[i] = other._data[i];
-        }
-    }
+	SuperVector(size_t size) : _size(size), _capacity(size * 1.5f)
+	{
+		_data = new int[_capacity]();
+	}
 
-    int Get(size_t index) const
-    {
-        if (index <= _size && index >= 0) //mistake
-        {
-            return _data[index];
-        }
-        return 0;
-    }
+	SuperVector(const SuperVector& other) : _size(other._size), _capacity(other._capacity)
+	{
+		_data = new int[_capacity];
+		for (size_t i = 0; i < _size; i++)
+		{
+			_data[i] = other._data[i];
+		}
+	}
 
-    size_t Size() const
-    {
-        return _size;
-    }
+	int Get(size_t index) const
+	{
+		if (index < _size && index >= 0)
+		{
+			return _data[index];
+		}
+		return 0;
+	}
 
-    bool Set(int index, int value) const
-    {
-        if (index >= 0 && index < _size) {
-            _data[index] = value;
-            return true;
-        }
+	size_t Size() const
+	{
+		return _size;
+	}
 
-        return false;
-    }
+	bool Set(int index, int value)
+	{
+		if (index >= 0 && index < _size) {
+			_data[index] = value;
+			return 1;
+		}
 
+		return 0;
+	}
 
+	void PushBack(int value)
+	{
+		if (_size == _capacity) ResizeArray(1.5f);
 
-    void PushBack(int value)
-    {
-        if (_size == _capacity) ResizeArray(1.5f);
+		_data[_size++] = value;
+	}
 
-        _data[_size] = value;
-    }
+	bool Insert(int index, int value)
+	{
+		if (index < 0 || index > _size) return 0;
 
-    bool Insert(int index, int value)
-    {
-        if (index < 0 || index >= _size) return false;
+		if (_size == _capacity) ResizeArray(1.5f);
 
-        if (_size == _capacity) ResizeArray(1.5f);
+		for (int i = _size; i > index; i--)
+		{
+			_data[i] = _data[i - 1];
+			
+		}
 
-        int temp = _data[index];
-        _data[index] = value;
+		_data[index] = value;
 
-        for (int i = index + 1; i < _size + 1; i++)
-        {
-            int _temp = _data[i];
-            _data[i] = temp;
-            temp = _temp;
-        }
+		_size++;
+		return 1;
+	}
 
-        _size++;
-        return true;
-    }
+	void Pop()
+	{
+		_data[--_size] = 0;
 
-    void Pop()
-    { 
-        _data[--_size] = 0; 
+		if (_size <= _capacity * 0.7f) ResizeArray(0.7f);
+	}
 
-        if (_size <= _capacity * 0.7f) ResizeArray(0.7f);
-    }
+	bool Remove(int index)
+	{
+		if (index < 0 || index >= _size) return 0;
 
-    bool Remove(int index)
-    {
-        if (index < 0 || index >= _size) return false;
+		for (int i = index; i < _size - 1; i++)
+		{
+			_data[i] = _data[i + 1];
+		}
 
-        for (int i = index; i < _size - 1; i++)
-        {
-            _data[i] = _data[i + 1];
-        }
+		Pop();
+		return true;
+	}
 
-        Pop();
-        return true;
-    }
-
-    ~SuperVector()
-    {
-        delete[] _data;
-    }
+	~SuperVector()
+	{
+		delete[] _data;
+	}
 
 };
 
 void DisplayVector(const SuperVector& vector)
 {
-    for (int i = 0; i < vector.Size(); ++i)
-    {
-        std::cout << vector.Get(i) << " ";
-    }
+	for (int i = 0; i < vector.Size(); ++i)
+	{
+		std::cout << vector.Get(i) << " ";
+	}
 }
 
 
 int main()
 {
-    SuperVector vector(5);
-    //vector.Set(4, 6);
-    //vector.Insert(7, 12);
-    //vector.Insert(10, 80);
-    //vector.Pop();
-    vector.Set(0, 1);
-    vector.Set(1, 2);
-    vector.Set(2, 3);
-    vector.Set(3, 4);
-    vector.Set(4, 5);
-    vector.Remove(0);
-    DisplayVector(vector);
-    return 0;
+	SuperVector vector(6);
+
+	vector.Set(0, 1);
+	vector.Set(1, 2);
+	vector.Set(2, 3);
+	vector.Set(3, 4);
+	vector.Set(4, 5);
+	vector.Set(5, 6);
+	vector.Insert(3, 10);
+	vector.Pop();
+	vector.PushBack(10);
+	vector.Remove(1);
+	DisplayVector(vector);
+
+	return 0;
 }
