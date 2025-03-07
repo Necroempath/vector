@@ -16,7 +16,15 @@ private:
 
     void ResizeArray(float factor)
     {
+        int* temp = new int[_capacity * factor]();
 
+        for (int i = 0; i < _size; i++)
+        {
+            _data[i] = temp[i];
+        }
+
+        delete[] _data;
+        _data = temp;
     }
 
 public:
@@ -101,13 +109,9 @@ public:
     {
         if (index < 0 || index >= _size) return false;
 
-        int temp = _data[_size - 2];
-
-        for (int i = _size - 1; i > index; i--)
+        for (int i = index; i < _size - 1; i++)
         {
-            int temp = _data[i - 1];
-            _data[_size - 1] = _data[i - 1];
-            _data[i - 1] = temp;
+            _data[i] = _data[i + 1];
         }
 
         Pop();
@@ -142,7 +146,7 @@ int main()
     vector.Set(2, 3);
     vector.Set(3, 4);
     vector.Set(4, 5);
-    vector.Remove(1);
+    vector.Remove(0);
     DisplayVector(vector);
     return 0;
 }
