@@ -39,7 +39,7 @@ public:
 
     int Get(size_t index) const
     {
-        if (index <= _size && index > 0)
+        if (index <= _size && index >= 0) //mistake
         {
             return _data[index];
         }
@@ -100,6 +100,18 @@ public:
     bool Remove(int index)
     {
         if (index < 0 || index >= _size) return false;
+
+        int temp = _data[_size - 2];
+
+        for (int i = _size - 1; i > index; i--)
+        {
+            int temp = _data[i - 1];
+            _data[_size - 1] = _data[i - 1];
+            _data[i - 1] = temp;
+        }
+
+        Pop();
+        return true;
     }
 
     ~SuperVector()
@@ -120,11 +132,17 @@ void DisplayVector(const SuperVector& vector)
 
 int main()
 {
-    SuperVector vector(10);
-    vector.Set(4, 6);
-    vector.Insert(7, 12);
-    vector.Insert(10, 80);
-    vector.Pop();
+    SuperVector vector(5);
+    //vector.Set(4, 6);
+    //vector.Insert(7, 12);
+    //vector.Insert(10, 80);
+    //vector.Pop();
+    vector.Set(0, 1);
+    vector.Set(1, 2);
+    vector.Set(2, 3);
+    vector.Set(3, 4);
+    vector.Set(4, 5);
+    vector.Remove(1);
     DisplayVector(vector);
     return 0;
 }
